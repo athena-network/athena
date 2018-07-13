@@ -40,7 +40,7 @@ const uint64_t DIFFICULTY_BLOCKS_COUNT_V3                    = DIFFICULTY_WINDOW
 
 const uint32_t MANDATORY_TRANSACTION                         = 2;
 
-const uint64_t MANDATORY_TRANSACTION_HEIGHT                  = 300;
+const uint64_t MANDATORY_TRANSACTION_HEIGHT                  = 320;
 
 const unsigned EMISSION_SPEED_FACTOR                         = 9;
 const unsigned EMISSION_SPEED_FACTOR_V2                      = 18;
@@ -48,7 +48,7 @@ const unsigned EMISSION_SPEED_FACTOR_V2                      = 18;
 static_assert(EMISSION_SPEED_FACTOR <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
 static_assert(EMISSION_SPEED_FACTOR_V2 <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
 
-const uint64_t SLOWER_EMISSION_HEIGHT                        = 300;
+const uint64_t SLOWER_EMISSION_HEIGHT                        = 320;
 
 /* Premine amount */
 const uint64_t GENESIS_BLOCK_REWARD                          = UINT64_C(214748364);
@@ -141,6 +141,7 @@ static_assert(UPGRADE_VOTING_WINDOW > 1, "Bad UPGRADE_VOTING_WINDOW");
 /* Block heights we are going to have hard forks at */
 const uint64_t FORK_HEIGHTS[] =
 {
+    320,
     4392,
     8684,
     13176,
@@ -150,8 +151,8 @@ const uint64_t FORK_HEIGHTS[] =
 const uint64_t FORK_HEIGHTS_SIZE = sizeof(FORK_HEIGHTS) / sizeof(*FORK_HEIGHTS);
 
 /* The index in the FORK_HEIGHTS array that this version of the software will
-   support. For example, if CURRENT_FORK_INDEX is 3, this version of the
-   software will support the fork at 600,000 blocks.
+   support. For example, if CURRENT_FORK_INDEX is 2, this version of the
+   software will support the fork at 8684 blocks.
 
    This will default to zero if the FORK_HEIGHTS array is empty, so you don't
    need to change it manually. */

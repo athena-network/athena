@@ -584,12 +584,11 @@ std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlo
 
   auto mandatoryTransactions = currency.mandatoryTransaction();
 
-  if (mandatoryTransactions != 0) {
-    if (cachedBlock.getBlock().transactionHashes.size() < mandatoryTransactions && cache->getBlockIndex(cachedBlock.getBlockHash()) > parameters::MANDATORY_TRANSACTION_HEIGHT) {
-      logger(Logging::WARNING) << "To eliminate waste, a new block must have at least " << mandatoryTransactions << " transactions";
-        return error::BlockValidationError::NOT_ENOUGH_TRANSACTIONS;
-    }
-  } 
+  /* Do we need mandatoryTransactions + 1 to include the miner tx here? */
+  if (cachedBlock.getBlock().transactionHashes.size() < mandatoryTransactions && previousBlockIndex+1 >= parameters::MANDATORY_TRANSACTION_HEIGHT) {
+    logger(Logging::WARNING) << "To eliminate waste, a new block must have at least " << mandatoryTransactions << " transactions";
+    return error::BlockValidationError::NOT_ENOUGH_TRANSACTIONS;
+  }
 
   auto currentDifficulty = cache->getDifficultyForNextBlock(previousBlockIndex);
   if (currentDifficulty == 0) {
@@ -1214,11 +1213,11 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
     return false;
   }
 
-  if (currency.mandatoryTransaction()) {
-    if (transactionsSize == 0 && height > parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW) {
-      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Need at least two transactions beside base transaction";
-        return false;
-        }
+  auto mandatoryTransactions = currency.mandatoryTransaction();
+
+  if (transactionsSize < mandatoryTransactions && height >= parameters::MANDATORY_TRANSACTION_HEIGHT) {
+      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Need at least " << mandatoryTransactions << " transactions beside base transaction";
+      return false;
   }
 
   size_t cumulativeSize = transactionsSize + getObjectBinarySize(b.baseTransaction);
