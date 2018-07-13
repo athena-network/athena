@@ -584,7 +584,6 @@ std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlo
 
   auto mandatoryTransactions = currency.mandatoryTransaction();
 
-  /* Do we need mandatoryTransactions + 1 to include the miner tx here? */
   if (cachedBlock.getBlock().transactionHashes.size() < mandatoryTransactions && previousBlockIndex+1 >= parameters::MANDATORY_TRANSACTION_HEIGHT) {
     logger(Logging::WARNING) << "To eliminate waste, a new block must have at least " << mandatoryTransactions << " transactions";
     return error::BlockValidationError::NOT_ENOUGH_TRANSACTIONS;
@@ -1215,7 +1214,7 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
 
   auto mandatoryTransactions = currency.mandatoryTransaction();
 
-  if (transactionsSize < mandatoryTransactions && height >= parameters::MANDATORY_TRANSACTION_HEIGHT) {
+  if (b.transactionHashes.size() < mandatoryTransactions && height >= parameters::MANDATORY_TRANSACTION_HEIGHT) {
       logger(Logging::ERROR, Logging::BRIGHT_RED) << "Need at least " << mandatoryTransactions << " transactions beside base transaction";
       return false;
   }
