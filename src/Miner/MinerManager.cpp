@@ -29,6 +29,7 @@
 #include "CryptoNoteCore/TransactionExtra.h"
 #include "Rpc/HttpClient.h"
 #include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcServerErrorCodes.h"
 #include "Rpc/JsonRpc.h"
 
 using namespace CryptoNote;
@@ -96,6 +97,15 @@ void MinerManager::start() {
       System::Timer timer(m_dispatcher);
       timer.sleep(std::chrono::seconds(m_config.scanPeriod));
       continue;
+    } catch (const JsonRpc::JsonRpcError &e) {
+      if (e.code == CORE_RPC_ERROR_CODE_INTERNAL_ERROR)
+      {
+          System::Timer timer(m_dispatcher);
+          timer.sleep(std::chrono::seconds(m_config.scanPeriod));
+          continue;
+      }
+
+      throw e;
     }
 
     adjustBlockTemplate(params.blockTemplate);
@@ -253,6 +263,17 @@ BlockMiningParameters MinerManager::requestMiningParameters(System::Dispatcher& 
 
     m_logger(Logging::DEBUGGING) << "Requested block template with previous block hash: " << Common::podToHex(params.blockTemplate.previousBlockHash);
     return params;
+  } catch (const JsonRpc::JsonRpcError &e) {
+    if (e.code == CORE_RPC_ERROR_CODE_INTERNAL_ERROR)
+    {
+      m_logger(Logging::WARNING) << "Failed to get block template - there are "
+                                 << "probably not the required amount of "
+                                 << "transactions in the transaction "
+                                 << "pool yet.";
+
+    }
+
+    throw;
   } catch (std::exception& e) {
     m_logger(Logging::WARNING) << "Couldn't get block template: " << e.what();
     throw;
