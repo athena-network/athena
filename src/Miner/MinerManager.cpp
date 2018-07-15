@@ -105,7 +105,7 @@ void MinerManager::start() {
           continue;
       }
 
-      throw e;
+      throw;
     }
 
     adjustBlockTemplate(params.blockTemplate);
