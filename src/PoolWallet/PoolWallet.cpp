@@ -1618,8 +1618,8 @@ int main(int argc, char* argv[]) {
 
   std::cout << "Please note that usage of simplewallet/poolwallet has been "
             << "deprecated for pool usage." << std::endl
-            << "If you are using turtle-pool, you can trivially transfer to "
-            << "walletd by following these instructions:" << std::endl
+            << "If you are using athena-pool, you can trivially transfer to "
+            << "services by following these instructions:" << std::endl
             << "https://github.com/turtlecoin/turtle-pool/pull/5" << std::endl;
 
   CryptoNote::Currency currency = CryptoNote::CurrencyBuilder(logManager).

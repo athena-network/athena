@@ -1,14 +1,14 @@
 version: '3'
 
 services:
-  node1:
-    image: funkypenguin/turtlecoin
-    container_name: turtletest-node1
-    volumes:
-      - ../turtlecoind:/var/lib/turtlecoind/
-    networks:
-      testnet:
-        ipv4_address: 172.16.76.11
+#  node1:
+#    image: funkypenguin/athena
+#    container_name: turtletest-node1
+#    volumes:
+#      - ../athena:/var/lib/athena/
+#    networks:
+#      testnet:
+#        ipv4_address: 172.16.76.11
   
 #  node2:
 #    image: funkypenguin/turtlecoin
