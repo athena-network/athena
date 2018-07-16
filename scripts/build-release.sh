@@ -8,7 +8,7 @@ BUILD_DIRECTORY=$2
 function usage()
 {
     echo "This script builds the dynamically and statically linked version"
-    echo "and generates the checksum files of the TurtleCoin tag provided."
+    echo "and generates the checksum files of the Athena tag provided."
     echo
     echo "USAGE: $0 <tag> <build-directory>"
     echo
@@ -69,10 +69,11 @@ function generate_tarball()
 
     echo "generating tarball $TARBALL .."
     tar --transform "s,^,$RELEASE_NAME/," -c -f $TARBALL -z -C "$CLONE_DIR/build/release/src" \
-        miner \
-        zedwallet \
-        TurtleCoind \
-        walletd
+        solominer \
+        wallet \
+        Athena \
+        services \
+        legacy-services 
 
     generate_checksums $TARBALL
 }
@@ -115,11 +116,11 @@ then
 fi
 
 # -- Config
-GITHUB_REPO="https://github.com/turtlecoin/turtlecoin.git"
-CLONE_DIR="$BUILD_DIRECTORY/turtlecoin-buildall"
-TARGET_DIR="$BUILD_DIRECTORY/turtlecoin-releases"
-DYNAMIC_RELEASE="turtlecoin-${TAG_VERSION}-linux-CLI"
-STATIC_RELEASE="turtlecoin-${TAG_VERSION}-linux-staticboost-CLI"
+GITHUB_REPO="https://github.com/athena-network/athena.git"
+CLONE_DIR="$BUILD_DIRECTORY/athena-buildall"
+TARGET_DIR="$BUILD_DIRECTORY/athena-releases"
+DYNAMIC_RELEASE="athena-${TAG_VERSION}-linux-CLI"
+STATIC_RELEASE="athena-${TAG_VERSION}-linux-staticboost-CLI"
 
 checkout_tag
 build_static_linked_version
