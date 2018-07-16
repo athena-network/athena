@@ -4,9 +4,9 @@
 # Useless for mainnet, but used to setup a testnet with checkpoints, and not have to spend days mining to get to the next block!
 #
 # daemon runs in the background
-# run something like tail /var/log/turtlecoind/current to see the status
+# run something like tail /var/log/athena/current to see the status
 # be sure to run with volumes, ie:
-# docker run -v $(pwd)/turtlecoind:/var/lib/turtlecoind -v $(pwd)/wallet:/home/turtlecoin --rm -ti turtlecoin:0.2.2
+# docker run -v $(pwd)/athena:/var/lib/athena -v $(pwd)/wallet:/home/athena --rm -ti athena:0.2.2
 ARG base_image_version=0.10.0
 FROM phusion/baseimage:$base_image_version
 
@@ -17,13 +17,13 @@ ADD https://github.com/just-containers/socklog-overlay/releases/download/v2.1.0-
 RUN tar xzf /tmp/socklog-overlay-amd64.tar.gz -C /
 
 # Get the latest checkpoints (we don't care about being _100%_ up-to-date, but we need to be past block 350K for the algo change to CN_lite_v1)
-ADD https://raw.githubusercontent.com/turtlecoin/checkpoints/master/checkpoints.csv /tmp/
+ADD https://raw.githubusercontent.com/athena/checkpoints/master/checkpoints.csv /tmp/
 
 # In a multi-node testnet, we'll want to have the slave nodes "wait" for the master node to wake up, so let's get ready
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /tmp/
 
-ARG TURTLECOIN_BRANCH=master
-ENV TURTLECOIN_BRANCH=${TURTLECOIN_BRANCH}
+ARG ATHENA_BRANCH=master
+ENV ATHENA_BRANCH=${ATHENA_BRANCH}
 
 # install build dependencies
 # checkout the latest tag
@@ -37,9 +37,9 @@ RUN apt-get update && \
       git cmake \
       libboost1.58-all-dev \
       librocksdb-dev && \
-    git clone https://github.com/turtlecoin/turtlecoin.git /src/turtlecoin && \
-    cd /src/turtlecoin && \
-    git checkout $TURTLECOIN_BRANCH && \
+    git clone https://github.com/athena/athena.git /src/athena && \
+    cd /src/athena && \
+    git checkout $ATHENA_BRANCH && \
     sed -i '/std::vector<uint64_t> timestamps_o(timestamps);/i \\/*\n   Lower difficulty to static 500 for testnet\n   The rest of this function is ignored\n*\/\nreturn 500;\n\n' src/CryptoNoteCore/Currency.cpp && \
     sed -i -e 's/"104.236.227.176:11897",/"172.16.76.11:11897",/g' src/CryptoNoteConfig.h && \
     sed -i -e 's/"46.101.132.184:11897",/"172.16.76.12:11897",/g' src/CryptoNoteConfig.h && \
@@ -50,23 +50,23 @@ RUN apt-get update && \
     sed -i -e 's/"145.239.88.119:11999", \/\/cision/"10.0.76.11:11897",/g' src/CryptoNoteConfig.h && \
     sed -i -e 's/"142.44.242.106:11897", \/\/tom/"10.0.76.12:11897",/g' src/CryptoNoteConfig.h && \
     sed -i -e 's/"165.227.252.132:11897" \/\/iburnmycd/"10.0.76.13:11897",/g' src/CryptoNoteConfig.h && \
-    sed -i -e 's/TurtleCoin/TortleCoin/' src/CryptoNoteConfig.h && \
+    sed -i -e 's/athena-network/athena/' src/CryptoNoteConfig.h && \
     sed -i -e 's/0xcf, 0x52, 0x57/0x52, 0xcf, 0x57/' src/P2p/P2pNetworks.h && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_CXX_FLAGS="-g0 -Os -fPIC -std=gnu++11" .. && \
     make -j$(nproc) && \
     mkdir -p /usr/local/bin && \
-    cp src/TurtleCoind /usr/local/bin/TurtleCoind && \
-    cp src/walletd /usr/local/bin/walletd && \
-    cp src/zedwallet /usr/local/bin/zedwallet && \
-    cp src/miner /usr/local/bin/miner && \
-    strip /usr/local/bin/TurtleCoind && \
-    strip /usr/local/bin/walletd && \
-    strip /usr/local/bin/zedwallet && \
-    strip /usr/local/bin/miner && \
+    cp src/Athena /usr/local/bin/Athena && \
+    cp src/services /usr/local/bin/services && \
+    cp src/wallet /usr/local/bin/wallet && \
+    cp src/solominer /usr/local/bin/solominer && \
+    strip /usr/local/bin/Athena && \
+    strip /usr/local/bin/services && \
+    strip /usr/local/bin/wallet && \
+    strip /usr/local/bin/solominer && \
     cd / && \
-    rm -rf /src/turtlecoin && \
+    rm -rf /src/athena && \
     apt-get remove -y build-essential python-dev gcc-4.9 g++-4.9 git cmake libboost1.58-all-dev librocksdb-dev && \
     apt-get autoremove -y && \
     apt-get install -y  \
@@ -80,29 +80,29 @@ RUN apt-get update && \
       libboost-program-options1.58.0 \
       libicu55
 
-# setup the turtlecoind service
-RUN useradd -r -s /usr/sbin/nologin -m -d /var/lib/turtlecoind turtlecoind && \
-    useradd -s /bin/bash -m -d /home/turtlecoin turtlecoin && \
-    mkdir -p /etc/services.d/turtlecoind/log && \
-    mkdir -p /var/log/turtlecoind && \
-    echo "#!/usr/bin/execlineb" > /etc/services.d/turtlecoind/run && \
-    echo "fdmove -c 2 1" >> /etc/services.d/turtlecoind/run && \
-    echo "cd /var/lib/turtlecoind" >> /etc/services.d/turtlecoind/run && \
-    echo "export HOME /var/lib/turtlecoind" >> /etc/services.d/turtlecoind/run && \
-    echo "s6-setuidgid turtlecoind /usr/local/bin/TurtleCoind --log-level=2" >> /etc/services.d/turtlecoind/run && \
-    chmod +x /etc/services.d/turtlecoind/run && \
+# setup the athena service
+RUN useradd -r -s /usr/sbin/nologin -m -d /var/lib/athena athena && \
+    useradd -s /bin/bash -m -d /home/athena athena && \
+    mkdir -p /etc/services.d/athena/log && \
+    mkdir -p /var/log/athena && \
+    echo "#!/usr/bin/execlineb" > /etc/services.d/athena/run && \
+    echo "fdmove -c 2 1" >> /etc/services.d/athena/run && \
+    echo "cd /var/lib/athena" >> /etc/services.d/athena/run && \
+    echo "export HOME /var/lib/athena" >> /etc/services.d/athena/run && \
+    echo "s6-setuidgid athena /usr/local/bin/Athena --log-level=2" >> /etc/services.d/athena/run && \
+    chmod +x /etc/services.d/athena/run && \
     chmod +x /tmp/wait-for-it.sh && \
-    chown nobody:nogroup /var/log/turtlecoind && \
-    echo "#!/usr/bin/execlineb" > /etc/services.d/turtlecoind/log/run && \
-    echo "s6-setuidgid nobody" >> /etc/services.d/turtlecoind/log/run && \
-    echo "s6-log -bp -- n20 s1000000 /var/log/turtlecoind" >> /etc/services.d/turtlecoind/log/run && \
-    chmod +x /etc/services.d/turtlecoind/log/run && \
-    echo "/var/lib/turtlecoind true turtlecoind 0644 0755" > /etc/fix-attrs.d/turtlecoind-home && \
-    echo "/home/turtlecoin true turtlecoin 0644 0755" > /etc/fix-attrs.d/turtlecoin-home && \
-    echo "/tmp/checkpoints.csv true turtlecoin 0644 0755" > /etc/fix-attrs.d/turtlecoin-checkpoints && \
-    echo "/var/log/turtlecoind true nobody 0644 0755" > /etc/fix-attrs.d/turtlecoind-logs
+    chown nobody:nogroup /var/log/athena && \
+    echo "#!/usr/bin/execlineb" > /etc/services.d/athena/log/run && \
+    echo "s6-setuidgid nobody" >> /etc/services.d/athena/log/run && \
+    echo "s6-log -bp -- n20 s1000000 /var/log/athena" >> /etc/services.d/athena/log/run && \
+    chmod +x /etc/services.d/athena/log/run && \
+    echo "/var/lib/athena true athena 0644 0755" > /etc/fix-attrs.d/athena-home && \
+    echo "/home/athena true athena 0644 0755" > /etc/fix-attrs.d/athena-home && \
+    echo "/tmp/checkpoints.csv true athena 0644 0755" > /etc/fix-attrs.d/athena-checkpoints && \
+    echo "/var/log/athena true nobody 0644 0755" > /etc/fix-attrs.d/athena-logs
 
-VOLUME ["/var/lib/turtlecoind", "/home/turtlecoin","/var/log/turtlecoind"]
+VOLUME ["/var/lib/athena", "/home/athena","/var/log/athena"]
 
 ENTRYPOINT ["/init"]
-CMD ["/usr/bin/execlineb", "-P", "-c", "emptyenv cd /home/turtlecoin export HOME /home/turtlecoin s6-setuidgid turtlecoin tail -f /var/log/turtlecoind/current"]
+CMD ["/usr/bin/execlineb", "-P", "-c", "emptyenv cd /home/athena export HOME /home/athena s6-setuidgid athena tail -f /var/log/athena/current"]
