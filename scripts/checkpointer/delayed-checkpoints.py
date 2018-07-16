@@ -19,10 +19,10 @@ def lastknownblock():
 
 
 def height():
-    base_url = 'http://localhost:11898/getheight'
+    base_url = 'http://localhost:12001/getheight'
     resp = requests.get(base_url).json()
     if 'height' not in resp:
-        print ('Unexpected response, make sure TurtleCoind is running',
+        print ('Unexpected response, make sure Athena is running',
                resp)
         sys.exit(-1)
     else:
@@ -30,7 +30,7 @@ def height():
 
 
 def rpc(method, params={}):
-    base_url = 'http://localhost:11898/json_rpc'
+    base_url = 'http://localhost:12001/json_rpc'
     payload = {
         'jsonrpc': '2.0',
         'id': 'block_info',
@@ -39,7 +39,7 @@ def rpc(method, params={}):
         }
     resp = requests.post(base_url, data=json.dumps(payload)).json()
     if 'result' not in resp:
-        print ('Unexpected response, make sure Turtlecoind is running with block explorer enabled'
+        print ('Unexpected response, make sure Athena is running with block explorer enabled'
                , resp)
         sys.exit(-1)
     else:

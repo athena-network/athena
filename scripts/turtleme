@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2018, The TurtleCoin developers
+# Copyright (c) 2018, The Athena developers
 # RockSteady made this
 
 # Put this script in /usr/bin and make it executable
 # like this --> sudo chmod +x /usr/bin/turtleme
 
-# If this is your first time compiling TurtleCoin or you think you
+# If this is your first time compiling Athena or you think you
 # may need a compiler or library, uncomment this next line to
 # install the needed dependencies to compile.
 # sudo apt-get install build-essential python-dev gcc g++ git cmake libboost-all-dev librocksdb-dev -y
@@ -28,12 +28,12 @@ cd ~/Source/
 ls -al
 
 # This command announces that we are going to grab the latest copy of
-# TurtleCoin from the development branch of the github repository and
+# Athena from the development branch of the github repository and
 # put it in the dated source folder we just created above. 
 echo -e "\n== CLONING IN $sourcefolder"
-git clone -b development https://github.com/turtlecoin/turtlecoin $sourcefolder
+git clone -b development https://github.com/athena/athena $sourcefolder
 
-# Even though we've just cloned TurtleCoin into the dated ~/Source
+# Even though we've just cloned Athena into the dated ~/Source
 # folder, we are still in ~/Source and need to move to where we just
 # cloned the data, and then display the contents to make sure we
 # got everything. 
@@ -41,7 +41,7 @@ cd $sourcefolder
 ls -al
 
 # To build, we like to create a folder called build/ to build inside 
-# of in the TurtleCoin folder. This is not necessary, but keeps things
+# of in the Athena folder. This is not necessary, but keeps things
 # looking more tidy for later if you want to trash the compile quickly.
 mkdir -p $sourcefolder/build && cd $sourcefolder/build
 
@@ -65,7 +65,7 @@ ls -al
 # to package the daemon, miner, poolwallet, walletd and zedwallet for
 # archival.
 echo -e "\n\n\n== COMPRESSING BINARIES"
-zip turtlecoin-dev-bin-$(date '+%Y-%m-%d-%H-%M')-linux.zip miner poolwallet zedwallet TurtleCoind walletd
+zip athena-dev-bin-$(date '+%Y-%m-%d-%H-%M')-linux.zip solominer legacy-services wallet Athena services
 
 # Move the zip archive to ~/Binaries
 mv *.zip ~/Binaries/
