@@ -604,8 +604,6 @@ bool CryptoNoteProtocolHandler::on_connection_synchronized() {
       "\n                                                             \n"
       "\n                                                             \n" << ENDL;
 
-
-
     m_observerManager.notify(&ICryptoNoteProtocolObserver::blockchainSynchronized, m_core.getTopBlockIndex());
   }
   return true;
