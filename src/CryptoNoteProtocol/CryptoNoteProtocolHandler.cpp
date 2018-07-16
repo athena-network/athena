@@ -594,14 +594,15 @@ bool CryptoNoteProtocolHandler::on_connection_synchronized() {
 
       logger(INFO, BRIGHT_GREEN) <<
 
-      "\n                                                           \n"
-      "                _/      _/                                   \n"
-      "     _/_/_/  _/_/_/_/  _/_/_/      _/_/    _/_/_/      _/_/_/\n"
-      "  _/    _/    _/      _/    _/  _/_/_/_/  _/    _/  _/    _/ \n"
-      " _/    _/    _/      _/    _/  _/        _/    _/  _/    _/  \n"
-      "  _/_/_/      _/_/  _/    _/    _/_/_/  _/    _/    _/_/_/   \n" << ENDL;
-
-
+      "\n                                                             \n"
+      "\n                                                             \n"
+      "                 _/      _/                                    \n"
+      "      _/_/_/  _/_/_/_/  _/_/_/      _/_/    _/_/_/      _/_/_/ \n"
+      "   _/    _/    _/      _/    _/  _/_/_/_/  _/    _/  _/    _/  \n"
+      "  _/    _/    _/      _/    _/  _/        _/    _/  _/    _/   \n"
+      "   _/_/_/      _/_/  _/    _/    _/_/_/  _/    _/    _/_/_/    \n"
+      "\n                                                             \n"
+      "\n                                                             \n" << ENDL;
 
     m_observerManager.notify(&ICryptoNoteProtocolObserver::blockchainSynchronized, m_core.getTopBlockIndex());
   }
