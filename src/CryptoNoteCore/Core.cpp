@@ -217,7 +217,7 @@ bool Core::notifyObservers(BlockchainMessage&& msg) /* noexcept */ {
     }
     return true;
   } catch (std::exception& e) {
-    logger(Logging::WARNING) << "failed to notify observers: " << e.what();
+    logger(Logging::WARNING) << "Failed to notify observers: " << e.what();
     return false;
   }
 }
@@ -1215,7 +1215,7 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
   auto mandatoryTransactions = currency.mandatoryTransaction();
 
   if (b.transactionHashes.size() < mandatoryTransactions && height >= parameters::MANDATORY_TRANSACTION_HEIGHT) {
-      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Need at least " << mandatoryTransactions << " transactions beside base transaction";
+      logger(Logging::INFO, Logging::BRIGHT_RED) << "Need at least " << mandatoryTransactions << " transactions beside base transaction";
       return false;
   }
 
