@@ -592,7 +592,7 @@ bool CryptoNoteProtocolHandler::on_connection_synchronized() {
       logger(INFO, WHITE) << " If you need more assistance, visit the #support channel in the Athena Discord Chat - https://chat.athx.org" << ENDL ;
       logger(INFO, BRIGHT_MAGENTA) << "===================================================" << ENDL << ENDL ;
 
-      logger(INFO, BRIGHT_GREEN) <<
+      logger(INFO, BRIGHT_MAGENTA) <<
 
       "\n                                                             \n"
       "\n                                                             \n"
