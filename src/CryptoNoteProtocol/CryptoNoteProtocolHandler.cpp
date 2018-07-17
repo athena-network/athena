@@ -242,7 +242,7 @@ bool CryptoNoteProtocolHandler::process_payload_sync_data(const CORE_SYNC_DATA& 
   } else {
     int64_t diff = static_cast<int64_t>(hshd.current_height) - static_cast<int64_t>(get_current_blockchain_height());
 
-    logger(diff >= 0 ? (is_inital ? Logging::INFO : Logging::DEBUGGING) : Logging::TRACE, Logging::BRIGHT_GREEN) << context <<
+    logger(diff >= 0 ? (is_inital ? Logging::INFO : Logging::DEBUGGING) : Logging::TRACE, Logging::BRIGHT_MAGENTA) << context <<
       "Your Athena node is syncing with the network. You are "
       // << get_current_blockchain_height() << " -> " << hshd.current_height
       << std::abs(diff) << " blocks (" << std::abs(diff) / (24 * 60 * 60 / m_currency.difficultyTarget()) << " days) "
@@ -470,7 +470,7 @@ int CryptoNoteProtocolHandler::handle_response_get_objects(int command, NOTIFY_R
     }
   }
 
-  logger(DEBUGGING, BRIGHT_GREEN) << "Local blockchain updated, new index = " << m_core.getTopBlockIndex();
+  logger(DEBUGGING, BRIGHT_MAGENTA) << "Local blockchain updated, new index = " << m_core.getTopBlockIndex();
   if (!m_stop && context.m_state == CryptoNoteConnectionContext::state_synchronizing) {
     request_missing_objects(context, true);
   }
@@ -574,7 +574,7 @@ bool CryptoNoteProtocolHandler::request_missing_objects(CryptoNoteConnectionCont
     requestMissingPoolTransactions(context);
 
     context.m_state = CryptoNoteConnectionContext::state_normal;
-    logger(Logging::INFO, Logging::BRIGHT_GREEN) << context << "Successfully synchronized with the Athena Network.";
+    logger(Logging::INFO, Logging::BRIGHT_MAGENTA) << context << "Successfully synchronized with the Athena Network.";
     on_connection_synchronized();
   }
   return true;
@@ -585,12 +585,14 @@ bool CryptoNoteProtocolHandler::on_connection_synchronized() {
   if (m_synchronized.compare_exchange_strong(val_expected, true)) {
     logger(Logging::INFO)
       << ENDL ;
-      logger(INFO, BRIGHT_MAGENTA) << "===[ Athena Tip! ]=============================" << ENDL ;
-      logger(INFO, WHITE) << " Always exit Athena and wallet with the \"exit\" command to preserve your chain and wallet data." << ENDL ;
-      logger(INFO, WHITE) << " Use the \"help\" command to see a list of available commands." << ENDL ;
-      logger(INFO, WHITE) << " Use the \"export_keys\" command in wallet to display your keys for restoring a corrupted wallet." << ENDL ;
-      logger(INFO, WHITE) << " If you need more assistance, visit the #support channel in the Athena Discord Chat - https://chat.athx.org" << ENDL ;
-      logger(INFO, BRIGHT_MAGENTA) << "===================================================" << ENDL << ENDL ;
+          logger(INFO, BRIGHT_MAGENTA) <<
+"\n                                                                             \n"
+       "==============================================[ Athena Tip! ]================================================= \n"
+       " Always exit Athena and wallet with the \"exit\" command to preserve your chain and wallet data. \n"
+       " Use the \"help\" command to see a list of available commands. \n"
+       " Use the \"export_keys\" command in wallet to display your keys for restoring a corrupted wallet. \n"
+       " If you need more assistance, visit the #support channel in the Athena Discord Chat - https://chat.athx.org \n"
+       "============================================================================================================== \n" << ENDL ;
 
       logger(INFO, BRIGHT_MAGENTA) <<
 
@@ -721,16 +723,16 @@ void CryptoNoteProtocolHandler::updateObservedHeight(uint32_t peerHeight, const 
       }
     }
   }
-  
+
   {
     std::lock_guard<std::mutex> lock(m_blockchainHeightMutex);
     if (peerHeight > m_blockchainHeight) {
       m_blockchainHeight = peerHeight;
-      logger(Logging::INFO, Logging::BRIGHT_GREEN) << "New Top Block Detected: " << peerHeight; 
+      logger(Logging::INFO, Logging::BRIGHT_MAGENTA) << "New Top Block Detected: " << peerHeight;
     }
   }
 
-  
+
   if (updated) {
     logger(TRACE) << "Observed height updated: " << m_observedHeight;
     m_observerManager.notify(&ICryptoNoteProtocolObserver::lastKnownBlockHeightUpdated, m_observedHeight);
@@ -759,7 +761,7 @@ uint32_t CryptoNoteProtocolHandler::getObservedHeight() const {
 
 uint32_t CryptoNoteProtocolHandler::getBlockchainHeight() const {
   std::lock_guard<std::mutex> lock(m_blockchainHeightMutex);
-  return m_blockchainHeight;  
+  return m_blockchainHeight;
 };
 
 bool CryptoNoteProtocolHandler::addObserver(ICryptoNoteProtocolObserver* observer) {
