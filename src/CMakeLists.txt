@@ -120,7 +120,7 @@ add_dependencies(P2P version)
 
 # Finally build the binaries
 set_property(TARGET Daemon PROPERTY OUTPUT_NAME "Athena")
-set_property(TARGET zedwallet PROPERTY OUTPUT_NAME "wallet")
+set_property(TARGET Wallet PROPERTY OUTPUT_NAME "wallet")
 set_property(TARGET PaymentGateService PROPERTY OUTPUT_NAME "services")
 set_property(TARGET PoolWallet PROPERTY OUTPUT_NAME "legacy-services")
 set_property(TARGET Miner PROPERTY OUTPUT_NAME "solominer")
