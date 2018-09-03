@@ -213,5 +213,6 @@ const char* const SEED_NODES[] = {
   "51.15.142.102:12000", //athena-0
   "51.15.137.77:12000",  //athena-1
   "165.227.252.132:12000" //community node
+  "95.179.138.105:12000" //community node
 };
 }
